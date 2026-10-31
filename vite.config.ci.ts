@@ -8,7 +8,7 @@ export default mergeConfig(
     resolve: {
       alias: [
         {
-          find: /^@appdeploy\\/client$/,
+          find: /^@appdeploy\/client$/,
           replacement: fileURLToPath(new URL('./ci/sdk-shims/client.ts', import.meta.url)),
         },
       ],
