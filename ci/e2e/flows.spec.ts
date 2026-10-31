@@ -9,7 +9,7 @@ const signIn = async (page: import('@playwright/test').Page) => {
 
 const openSection = async (page: import('@playwright/test').Page, name: string) => {
   await page.getByRole('button', { name, exact: true }).click();
-  await expect(page.locator('.page-heading h1')).toContainText(name);
+  await expect(page.locator('.breadcrumb')).toContainText(name);
 };
 
 test('1. sign in and load the private project workspace', async ({ page }) => {
