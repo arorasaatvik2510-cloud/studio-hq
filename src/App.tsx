@@ -277,6 +277,9 @@ function studioVaultBase64(bytes: Uint8Array): string {
   for (let index = 0; index < bytes.length; index += 1) binary += String.fromCharCode(bytes[index]);
   return window.btoa(binary);
 }
+function studioVaultBuffer(bytes: Uint8Array): ArrayBuffer {
+  return Uint8Array.from(bytes).buffer;
+}
 function studioVaultBytes(value: string): Uint8Array {
   const binary = window.atob(value);
   const bytes = new Uint8Array(binary.length);
@@ -306,7 +309,7 @@ function parseStudioVaultEnvelope(value: unknown): StudioVaultEnvelope {
 }
 async function studioVaultDeriveKey(passphrase: string, salt: Uint8Array, iterations = STUDIO_VAULT_ITERATIONS): Promise<CryptoKey> {
   if (!window.crypto?.subtle) throw new Error('This browser does not support the required encryption. Use an up-to-date browser over HTTPS.');
-  const material = await window.crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);
+  const material = await window.crypto.subtle.importKey('raw', studioVaultBuffer(new TextEncoder().encode(passphrase)), 'PBKDF2', false, ['deriveKey']);
   return window.crypto.subtle.deriveKey(
     { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
     material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
@@ -323,8 +326,8 @@ async function encryptStudioVaultSnapshot(payload: StudioVaultPayload, passphras
   };
   const key = await studioVaultDeriveKey(passphrase, salt);
   const ciphertext = await window.crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv, additionalData: studioVaultAad(metadata) },
-    key, new TextEncoder().encode(JSON.stringify(payload))
+    { name: 'AES-GCM', iv: studioVaultBuffer(iv), additionalData: studioVaultBuffer(studioVaultAad(metadata)) },
+    key, studioVaultBuffer(new TextEncoder().encode(JSON.stringify(payload)))
   );
   return { ...metadata, ciphertext: studioVaultBase64(new Uint8Array(ciphertext)) };
 }
@@ -334,8 +337,8 @@ async function decryptStudioVaultSnapshot(value: unknown, passphrase: string): P
   let payload: unknown;
   try {
     const plaintext = await window.crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: studioVaultBytes(envelope.iv), additionalData: studioVaultAad(envelope) },
-      key, studioVaultBytes(envelope.ciphertext)
+      { name: 'AES-GCM', iv: studioVaultBuffer(studioVaultBytes(envelope.iv)), additionalData: studioVaultBuffer(studioVaultAad(envelope)) },
+      key, studioVaultBuffer(studioVaultBytes(envelope.ciphertext))
     );
     payload = JSON.parse(new TextDecoder().decode(plaintext));
   } catch {
@@ -493,7 +496,7 @@ export default function App() {
       format: 'studio-hq-workspace-snapshot',
       version: 1,
       createdAt: new Date().toISOString(),
-      owner: user.email || user.name || 'Studio HQ owner',
+      owner: user?.email || user?.name || 'Studio HQ owner',
       tasks: tasks.map(task => ({ id: task.id, title: task.title, done: task.done, ...(task.createdAt ? { createdAt: task.createdAt } : {}) })),
       projects: projects.map(project => ({
         id: project.id, name: project.name, type: project.type,
