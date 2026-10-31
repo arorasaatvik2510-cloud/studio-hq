@@ -311,7 +311,7 @@ async function studioVaultDeriveKey(passphrase: string, salt: Uint8Array, iterat
   if (!window.crypto?.subtle) throw new Error('This browser does not support the required encryption. Use an up-to-date browser over HTTPS.');
   const material = await window.crypto.subtle.importKey('raw', studioVaultBuffer(new TextEncoder().encode(passphrase)), 'PBKDF2', false, ['deriveKey']);
   return window.crypto.subtle.deriveKey(
-    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    { name: 'PBKDF2', salt: studioVaultBuffer(salt), iterations, hash: 'SHA-256' },
     material, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
   );
 }
