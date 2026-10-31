@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@appdeploy/client": ["ci/types/appdeploy-client.d.ts"],
+      "@appdeploy/sdk": ["ci/types/appdeploy-server.d.ts"]
+    },
+    "types": ["vite/client"]
+  },
+  "include": [
+    "src",
+    "backend",
+    "ci/types/appdeploy-client.d.ts",
+    "ci/types/appdeploy-server.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "ci/e2e"]
+}
