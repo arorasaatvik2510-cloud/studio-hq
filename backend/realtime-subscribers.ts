@@ -91,7 +91,7 @@ export async function notifySubscribers(
 
 export const realtimeSubscriptionRoutes = {
   'POST /api/subscriptions': [
-    async ({ body }) => {
+    async ({ body }: { body: unknown }) => {
       const { entity_type, entity_id, connection_id } = (body || {}) as Record<
         string,
         string
@@ -105,7 +105,7 @@ export const realtimeSubscriptionRoutes = {
   ],
 
   'POST /api/subscriptions/remove': [
-    async ({ body }) => {
+    async ({ body }: { body: unknown }) => {
       const { entity_type, entity_id, connection_id } = (body || {}) as Record<
         string,
         string
