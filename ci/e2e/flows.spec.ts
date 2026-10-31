@@ -8,7 +8,9 @@ const signIn = async (page: import('@playwright/test').Page) => {
 };
 
 const openSection = async (page: import('@playwright/test').Page, name: string) => {
-  await page.getByRole('button', { name, exact: true }).click();
+  const navigationItem = page.locator('.sidebar nav .nav-item').filter({ hasText: name });
+  await expect(navigationItem).toBeVisible();
+  await navigationItem.click();
   await expect(page.locator('.breadcrumb')).toContainText(name);
 };
 
