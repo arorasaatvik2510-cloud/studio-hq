@@ -1,0 +1,55 @@
+name: Studio HQ — isolated CI and browser QA
+
+on:
+  push:
+    branches:
+      - codex/appdeploy-source-sync-20261031
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  isolated-preview:
+    name: Typecheck, build, and five browser scenarios
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Typecheck production client and backend contracts
+        run: npm run typecheck:ci
+
+      - name: Check SDK boundary and authenticated task routes
+        run: node ci/contract-check.mjs
+
+      - name: Build isolated CI preview
+        run: npm run build:ci
+
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Run five documented browser scenarios
+        run: npm run test:e2e
+
+      - name: Upload browser report and traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: studio-hq-playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 7
