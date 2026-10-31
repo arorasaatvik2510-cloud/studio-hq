@@ -1,0 +1,14 @@
+{
+  "methods": ["google", "email"],
+  "headline": "Welcome to Studio HQ",
+  "subtitle": "Sign in to your private project workspace.",
+  "style": {
+    "mode": "dark",
+    "accentColor": "#e8b66b",
+    "backgroundColor": "#0c0e13",
+    "panelColor": "#13161e",
+    "textColor": "#f2f3f7",
+    "fontFamily": "DM Sans, Inter, system-ui, sans-serif",
+    "borderRadius": 12
+  }
+}
