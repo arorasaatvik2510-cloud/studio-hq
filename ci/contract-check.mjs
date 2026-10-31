@@ -11,14 +11,16 @@ assert.match(app, /from ['"]@appdeploy\/client['"]/,
   'Production frontend must use the AppDeploy client package.');
 assert.match(backend, /from ['"]@appdeploy\/sdk['"]/,
   'Production backend must use the AppDeploy server package.');
-assert.match(backend, /'GET \/api\/tasks': \[\s*requireAuth\(\)/,
-  'Task list route must remain protected by requireAuth().');
-for (const method of ['POST', 'PUT', 'DELETE']) {
-  const route = new RegExp(
-    `'${method} \\/api\\/tasks(?:\\/:id)?': \\[\\s*requireAuth\\(\\)`
+
+for (const method of ['GET', 'POST', 'PUT', 'DELETE']) {
+  const path = method === 'GET' || method === 'POST' ? '/api/tasks' : '/api/tasks/:id';
+  const routePattern = new RegExp(
+    `'${method} ${path.replaceAll('/', '\\/')}': \\[\\s*requireAuth\\(\\)`
   );
-  assert.match(backend, route, `${method} task route must remain protected by requireAuth().`);
+  assert.match(backend, routePattern,
+    `${method} ${path} must remain protected by requireAuth().`);
 }
+
 assert.match(serverTypes, /export function requireAuth\(\): RouterMiddleware/,
   'CI type shim must include the documented auth middleware contract.');
 assert.doesNotMatch(app, /ci\/sdk-shims/,
