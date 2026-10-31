@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Sign in and load private project workspace",
+    "sanity": true,
+    "viewport": "desktop",
+    "covers": [
+      "authentication",
+      "dashboard rendering",
+      "project links",
+      "verified snapshot labels",
+      "Security Vault is the initial workspace view",
+      "The Archivist vault entry point"
+    ],
+    "description": "Verifies the signed-in workspace displays the project panels and labels initial status data as a snapshot.",
+    "steps": [
+      "Sign in using the AppDeploy authentication flow",
+      "Verify the Security Vault is the initial selected workspace section",
+      "Verify the assigned keeper identity is The Archivist and the encrypted vault setup or unlock form appears",
+      "Navigate to Overview and confirm the rest of the workspace remains available",
+      "Inspect the project cards and integration notice"
+    ],
+    "expected": "The workspace opens directly to Security Vault after sign-in, identifies The Archivist as the assigned keeper, presents vault setup or unlock controls, and preserves navigation to the other workspace sections."
+  },
+  {
+    "name": "Create, complete, and retain a workspace task",
+    "viewport": "desktop",
+    "covers": [
+      "task create",
+      "task update",
+      "database persistence",
+      "authenticated data isolation"
+    ],
+    "description": "Verifies a signed-in user can create a task, mark it complete, and see the saved state after navigating away and returning.",
+    "steps": [
+      "Open Tasks",
+      "Create a task titled 'Upload missing game artwork'",
+      "Mark the task complete",
+      "Navigate to Overview",
+      "Return to Tasks"
+    ],
+    "expected": "The task remains present and marked complete after navigation because it is saved in the authenticated user workspace."
+  },
+  {
+    "name": "Reject empty task and protect task API",
+    "viewport": "mobile",
+    "covers": [
+      "input validation",
+      "negative guardrail",
+      "unauthenticated API protection",
+      "responsive task form"
+    ],
+    "description": "Verifies empty task input is not submitted and task API routes reject requests without a valid sign-in token.",
+    "steps": [
+      "Open Tasks on a mobile viewport",
+      "Leave the task title empty",
+      "Verify the Add task button is disabled",
+      "Attempt to request the task endpoint without signing in"
+    ],
+    "expected": "The empty task cannot be submitted and the backend rejects unauthenticated requests without returning private task data."
+  },
+  {
+    "name": "Open the project link launchpad and verify beta status labels",
+    "viewport": "desktop",
+    "covers": [
+      "project launchpad navigation",
+      "FernAlibi beta preview link",
+      "Hollow House beta link",
+      "Pocketwise AppDeploy beta link",
+      "Pocketwise pending GitHub Pages status",
+      "GitHub and Figma resource links",
+      "Security Vault navigation",
+      "The Archivist identity gate",
+      "encrypted workspace snapshot",
+      "encrypted archive export/import",
+      "live task list restore guardrail"
+    ],
+    "description": "Verifies Studio HQ provides one launchpad for project websites and their source/design resources while distinguishing deployed destinations from unverified beta links.",
+    "steps": [
+      "Sign in to Studio HQ",
+      "Open Links & Launches from the sidebar",
+      "Verify FernAlibi and Hollow House previews are listed with asset warnings",
+      "Verify the Pocketwise AppDeploy beta is listed as ready while GitHub Pages remains pending",
+      "Verify repository, Pages settings, Actions, Figma and AppDeploy console links are listed",
+      "Open Security Vault from the sidebar.",
+      "Create a test passphrase of at least 12 characters and confirm it.",
+      "Seal the current workspace snapshot and download its encrypted archive.",
+      "Lock the vault and verify an incorrect keeper identity is rejected.",
+      "Unlock as The Archivist with the correct passphrase, import the encrypted archive and confirm it opens in read-only preview."
+    ],
+    "expected": "The launchpad shows current app URLs and associated source/management links. Pocketwise AppDeploy is marked ready while GitHub Pages remains unverified. The Security Vault requires the assigned keeper identity and passphrase, supports encrypted snapshot export/import, and leaves live tasks unchanged when an archive is imported."
+  },
+  {
+    "name": "Open Pocketwise inside Studio HQ and use the standalone fallback",
+    "viewport": "mobile",
+    "covers": [
+      "Pocketwise navigation",
+      "embedded expense tracker",
+      "responsive workspace layout",
+      "standalone app fallback",
+      "browser-local data transparency"
+    ],
+    "description": "Verifies the user can reach Pocketwise from Studio HQ, see the embedded tracker and open the separately deployed tracker when iframe rendering is unavailable.",
+    "steps": [
+      "Sign in and select Pocketwise from the sidebar",
+      "Verify the expense-tracker panel and browser-local data notice appear",
+      "Use Open in new tab to open the standalone beta"
+    ],
+    "expected": "Studio HQ displays the embedded Pocketwise beta with an obvious standalone fallback and clearly discloses browser-local storage and the absence of cloud sync."
+  }
+]
